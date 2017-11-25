@@ -1,0 +1,9 @@
+var x; var y;
+{
+  _x = 15;
+  if (_x)
+    y = x;
+  else
+    y = 128;
+  ans2579r = y - 1;
+}

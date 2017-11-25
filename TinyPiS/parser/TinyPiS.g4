@@ -29,6 +29,6 @@ unaryExpr: VALUE			# literalExpr
 ADDOP: '+'|'-';
 MULOP: '*'|'/';
 
-IDENTIFIER: 'x'|'y'|'z'|'answer';
+IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 VALUE: [0-9]+;
 WS: [ \t\r\n] -> skip;
