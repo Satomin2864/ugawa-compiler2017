@@ -1,0 +1,13 @@
+var x; var y;
+{
+  _x = 15;
+  if (_x)
+    y = x;
+  else
+    y = 128;
+  ans2579r = y - 1;
+  x = 0;
+  while(x){
+  	x = x + 1;
+  }
+}
