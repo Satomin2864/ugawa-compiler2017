@@ -15,7 +15,8 @@ class ASTBinaryExprNode extends ASTNode {
 	}
 }
 
-//演習３
+// 演習３
+// - と ~を表現できるようにする
 class ASTUnaryExprNode extends ASTNode {
 	String op;
 	ASTNode operand;
@@ -28,6 +29,7 @@ class ASTUnaryExprNode extends ASTNode {
 		return "(UnExpr "+op+" "+operand+")";
 	}
 }
+// 演習３追加はここまで
 
 class ASTNumberNode extends ASTNode {
 	int value;

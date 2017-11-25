@@ -6,6 +6,7 @@ import parser.TinyPiEParser.AndExprContext;
 import parser.TinyPiEParser.AddExprContext;
 import parser.TinyPiEParser.LiteralExprContext;
 import parser.TinyPiEParser.MulExprContext;
+import parser.TinyPiEParser.NotExprContext;
 import parser.TinyPiEParser.ParenExprContext;
 import parser.TinyPiEParser.VarExprContext;
 import parser.TinyPiEParser.SubExprContext;
@@ -34,12 +35,16 @@ public class ASTGenerator {
 			ASTNode rhs = translateExpr(ctx.addExpr());
 			return new ASTBinaryExprNode(ctx.ANDOP().getText(), lhs, rhs);
 		} 
+		// 演習３
+		// マイナス処理の追加
 		else if (ctxx instanceof AddExprContext) {
 			AddExprContext ctx = (AddExprContext) ctxx;
 			if (ctx.addExpr() == null)
 				return translateExpr(ctx.mulExpr());
 			ASTNode lhs = translateExpr(ctx.addExpr());
 			ASTNode rhs = translateExpr(ctx.mulExpr());
+			if (ctx.ADDOP() == null)
+				return new ASTBinaryExprNode(ctx.SUBOP().getText(), lhs, rhs);
 			return new ASTBinaryExprNode(ctx.ADDOP().getText(), lhs, rhs);
 		} else if (ctxx instanceof MulExprContext) {
 			MulExprContext ctx = (MulExprContext) ctxx;
@@ -61,12 +66,17 @@ public class ASTGenerator {
 			return translateExpr(ctx.expr());
 		}
 //		演習3
-//		編集中
 		else if (ctxx instanceof SubExprContext) {
 			SubExprContext ctx = (SubExprContext) ctxx;
 			ASTNode operand = translateExpr(ctx.unaryExpr());
 			return new ASTUnaryExprNode(ctx.SUBOP().getText(), operand);
 		}
+		else if (ctxx instanceof NotExprContext) {
+			NotExprContext ctx = (NotExprContext) ctxx;
+			ASTNode operand = translateExpr(ctx.unaryExpr());
+			return new ASTUnaryExprNode(ctx.NOTOP().getText(), operand);
+		}
+//		演習3の追加はここまで
 		throw new Error("Unknown parse tree node: "+ctxx.getText());		
 	}
 	ASTNode translate(ParseTree ctxx) {
