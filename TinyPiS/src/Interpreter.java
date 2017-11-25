@@ -4,8 +4,8 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import parser.TinyPiELexer;
-import parser.TinyPiEParser;
+import parser.TinyPiSLexer;
+import parser.TinyPiSParser;
 
 public class Interpreter extends InterpreterBase {
 	int evalExpr(ASTNode ndx, Environment env) {
