@@ -14,6 +14,7 @@ import parser.TinyPiSParser.MulExprContext;
 import parser.TinyPiSParser.NotExprContext;
 import parser.TinyPiSParser.OrExprContext;
 import parser.TinyPiSParser.ParenExprContext;
+import parser.TinyPiSParser.PrintStmtContext;
 import parser.TinyPiSParser.ProgContext;
 import parser.TinyPiSParser.StmtContext;
 import parser.TinyPiSParser.SubExprContext;
@@ -118,6 +119,13 @@ public class ASTGenerator {
 			return new ASTWhileStmtNode(cond, stmt);
 		}
 		// 演習7 ここまで
+//		演習12
+//		Print分の処理
+		else if(ctxx instanceof PrintStmtContext) {
+			PrintStmtContext ctx = (PrintStmtContext) ctxx;
+			ASTNode expr = translate(ctx.expr());
+			return new ASTPrintStmtNode(expr);
+		}
 		
 		else if (ctxx instanceof SubExprContext) {
 			SubExprContext ctx = (SubExprContext) ctxx;

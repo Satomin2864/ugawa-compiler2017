@@ -89,7 +89,13 @@ public class Interpreter extends InterpreterBase {
 			ASTWhileStmtNode nd = (ASTWhileStmtNode) ndx;
 			while(evalExpr(nd.cond, env) != 1)
 				evalStmt(nd.stmt, env);
-		} else
+		} 
+//		演習13 Print
+		else if (ndx instanceof ASTPrintStmtNode){
+			ASTPrintStmtNode nd = (ASTPrintStmtNode) ndx;
+			System.out.println(String.format("%08X", evalExpr(nd.expr, env)));
+		} 
+		else
 			throw new Error("Unknown statement: "+ndx);
 	}
 	

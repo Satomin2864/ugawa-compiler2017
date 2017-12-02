@@ -106,14 +106,62 @@ public class Compiler extends CompilerBase {
 			compileStmt(nd.stmt, env);
 			emitJMP("b", whileLabel);
 			emitLabel(whileEndLabel);
+		} 
+//		演習13
+//		Print文の作成
+		 else if (ndx instanceof ASTPrintStmtNode) {
+//				考える
+			 ASTPrintStmtNode nd = (ASTPrintStmtNode) ndx;
+			String loopLabel = freshLabel();
+//			String Hexadecimal = freshLabel();
+//			String ENDHexadecimal = freshLabel();
+			compileExpr(nd.expr, env);
+			emitPUSH(REG_R1);
+			emitPUSH(REG_R2);
+			emitPUSH(REG_R3);
+			emitPUSH(REG_R4);
+			emitPUSH(REG_R5);
+			emitPUSH(REG_R6);
+			emitPUSH(REG_R7);
+
+			
+			System.out.println("\tldr r1, =buf + nchar");
+			emitRI("mov", REG_R2, 10);
+			emitRI("mov", REG_R6, 1);
+			
+			emitLabel(loopLabel);
+			emitRRR("udiv", REG_R4, REG_DST, REG_R2);
+			emitRRR("mul", REG_R5, REG_R4, REG_R2);
+			emitRRR("sub", REG_R7, REG_DST, REG_R5);
+			emitRRI("sub", REG_R1, REG_R1, 1);
+			emitRRI("add", REG_R7, REG_R7, '0');
+			System.out.println("\tstrb r7, [r1]");	
+			emitRRI("add", REG_R6, REG_R6, 1);
+			emitRR("mov", REG_DST, REG_R4);
+			emitRI("cmp", REG_DST, 0);
+			emitJMP("bhi", loopLabel);
+			
+			emitRI("mov", REG_R7, 4);
+			emitRI("mov", REG_DST, 1);
+			emitRR("mov", REG_R2, REG_R6);
+			emitI("swi", 0);
+
+
+			emitPOP(REG_R7);
+			emitPOP(REG_R6);
+			emitPOP(REG_R5);
+			emitPOP(REG_R4);
+			emitPOP(REG_R3);
+			emitPOP(REG_R2);
+			emitPOP(REG_R1);
 		} else
 			throw new Error("Unkown expression: "+ndx);
 	}
 	void compile(ASTNode ast) {
 		Environment env = new Environment();
 		ASTProgNode prog = (ASTProgNode) ast;
+		System.out.println("\t.equ nchar, 10");
 		System.out.println("\t.section .data");
-		System.out.println("\t@ 大域変数の定義");
 		for (String varName: prog.varDecls) {
 			if (env.lookup(varName) != null)
 				throw new Error("Variable redefined: "+varName);
@@ -137,6 +185,9 @@ public class Compiler extends CompilerBase {
 		emitLDR("r0", REG_DST, 0);
 		emitRI("mov", "r7", 1);   // EXIT のシステムコール番号
 		emitI("swi", 0);
+		System.out.println("\t.section .data");
+//		演習13
+		System.out.println("buf: .space nchar,0x30\n\t.byte 0x0a");
 	}
 
 	public static void main(String[] args) throws IOException {
