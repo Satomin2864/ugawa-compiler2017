@@ -22,8 +22,21 @@ public class Interpreter extends InterpreterBase {
 				return  lhsValue * rhsValue;
 			else if (nd.op.equals("/"))
 				return lhsValue / rhsValue;
+			else if (nd.op.equals("&"))
+				return lhsValue & rhsValue;
+			else if (nd.op.equals("|"))
+				return lhsValue | rhsValue;
 			else
 				throw new Error("Unknwon operator: "+nd.op);
+		} else if(ndx instanceof ASTUnaryExprNode){
+			ASTUnaryExprNode nd = (ASTUnaryExprNode) ndx;
+			int operand = evalExpr(nd.operand, env);
+			if (nd.op.equals("-"))
+				return - operand;
+			else if(nd.op.equals("~"))
+				return ~ operand;
+			else
+				throw new Error("Unknwon operand: "+nd.op);
 		} else if (ndx instanceof ASTNumberNode) {
 			ASTNumberNode nd = (ASTNumberNode) ndx;
 			return nd.value;

@@ -4,15 +4,19 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import parser.TinyPiSParser.AddExprContext;
+import parser.TinyPiSParser.AndExprContext;
 import parser.TinyPiSParser.AssignStmtContext;
 import parser.TinyPiSParser.CompoundStmtContext;
 import parser.TinyPiSParser.ExprContext;
 import parser.TinyPiSParser.IfStmtContext;
 import parser.TinyPiSParser.LiteralExprContext;
 import parser.TinyPiSParser.MulExprContext;
+import parser.TinyPiSParser.NotExprContext;
+import parser.TinyPiSParser.OrExprContext;
 import parser.TinyPiSParser.ParenExprContext;
 import parser.TinyPiSParser.ProgContext;
 import parser.TinyPiSParser.StmtContext;
+import parser.TinyPiSParser.SubExprContext;
 import parser.TinyPiSParser.VarExprContext;
 import parser.TinyPiSParser.WhileStmtContext;
 
@@ -20,7 +24,25 @@ public class ASTGenerator {
 	ASTNode translate(ParseTree ctxx) {
 		if (ctxx instanceof ExprContext) {
 			ExprContext ctx = (ExprContext) ctxx;
-			return translate(ctx.addExpr());
+			return translate(ctx.orExpr());
+		} 
+//		or処理
+		else if (ctxx instanceof OrExprContext) {
+			OrExprContext ctx = (OrExprContext) ctxx;
+			if (ctx.orExpr() == null)
+				return translate(ctx.andExpr());
+			ASTNode lhs = translate(ctx.orExpr());
+			ASTNode rhs = translate(ctx.andExpr());
+			return new ASTBinaryExprNode(ctx.OROP().getText(), lhs, rhs);
+		} 
+//		and処理
+		else if (ctxx instanceof AndExprContext) {
+			AndExprContext ctx = (AndExprContext) ctxx;
+			if (ctx.andExpr() == null)
+				return translate(ctx.addExpr());
+			ASTNode lhs = translate(ctx.andExpr());
+			ASTNode rhs = translate(ctx.addExpr());
+			return new ASTBinaryExprNode(ctx.ANDOP().getText(), lhs, rhs);
 		} else if (ctxx instanceof AddExprContext) {
 			AddExprContext ctx = (AddExprContext) ctxx;
 			if (ctx.addExpr() == null)
@@ -28,7 +50,19 @@ public class ASTGenerator {
 			ASTNode lhs = translate(ctx.addExpr());
 			ASTNode rhs = translate(ctx.mulExpr());
 			return new ASTBinaryExprNode(ctx.ADDOP().getText(), lhs, rhs);
-		} else if (ctxx instanceof MulExprContext) {
+		} 
+//		マイナス処理
+		else if (ctxx instanceof AddExprContext) {
+			AddExprContext ctx = (AddExprContext) ctxx;
+			if (ctx.addExpr() == null)
+				return translate(ctx.mulExpr());
+			ASTNode lhs = translate(ctx.addExpr());
+			ASTNode rhs = translate(ctx.mulExpr());
+			if (ctx.ADDOP() == null)
+				return new ASTBinaryExprNode(ctx.SUBOP().getText(), lhs, rhs);
+			return new ASTBinaryExprNode(ctx.ADDOP().getText(), lhs, rhs);
+		} 
+		else if (ctxx instanceof MulExprContext) {
 			MulExprContext ctx = (MulExprContext) ctxx;
 			if (ctx.mulExpr() == null)
 				return translate(ctx.unaryExpr());
@@ -84,6 +118,17 @@ public class ASTGenerator {
 			return new ASTWhileStmtNode(cond, stmt);
 		}
 		// 演習7 ここまで
+		
+		else if (ctxx instanceof SubExprContext) {
+			SubExprContext ctx = (SubExprContext) ctxx;
+			ASTNode operand = translate(ctx.unaryExpr());
+			return new ASTUnaryExprNode(ctx.SUBOP().getText(), operand);
+		}
+		else if (ctxx instanceof NotExprContext) {
+			NotExprContext ctx = (NotExprContext) ctxx;
+			ASTNode operand = translate(ctx.unaryExpr());
+			return new ASTUnaryExprNode(ctx.NOTOP().getText(), operand);
+		}
 		throw new Error("Unknown parse tree node: "+ctxx.getText());		
 	}
 }

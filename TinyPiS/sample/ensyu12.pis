@@ -1,0 +1,9 @@
+var x; var y;
+{
+  x = 6;
+  y = 5;
+  answer = x & y;
+  answer = x | y;
+  answer = -x;
+  answer = ~y;
+}
