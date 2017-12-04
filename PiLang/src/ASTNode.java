@@ -159,3 +159,16 @@ class ASTCallNode extends ASTNode {
 		return s;
 	}
 }
+
+// 演習17
+class ASTReturnNode extends ASTNode {
+	ASTNode expr;
+	ASTReturnNode(ASTNode expr) {
+		this.expr = expr;
+	}
+	@Override
+	public String toString() {
+		return "(Returnstmt "+expr+")";
+	}
+}
+

@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import javafx.scene.transform.Translate;
 import parser.PiLangParser.AddExprContext;
 import parser.PiLangParser.AssignStmtContext;
 import parser.PiLangParser.CallExprContext;
@@ -78,8 +79,12 @@ public class ASTGenerator {
 			ASTNode cond = translate(ctx.expr());
 			ASTNode stmt = translate(ctx.stmt());
 			return new ASTWhileStmtNode(cond, stmt);
-	        } else if (ctxx instanceof ReturnStmtContext) {
-			throw new Error("ASTGenerator.java を修正して ReturnStmtContext の変換を実装してください");
+	    }
+//		演習17
+		else if (ctxx instanceof ReturnStmtContext) {
+				ReturnStmtContext ctx = (ReturnStmtContext) ctxx;
+				ASTNode expr = translate(ctx.expr());	
+				return new ASTReturnNode(expr);
 		} else if (ctxx instanceof ExprContext) {
 			ExprContext ctx = (ExprContext) ctxx;
 			return translate(ctx.addExpr());
@@ -117,7 +122,7 @@ public class ASTGenerator {
 				args.add(arg);
 			}
 			return new ASTCallNode(funcName, args);
-		}
+		} 
 		throw new Error("Unknown parse tree node: "+ctxx.getText());		
 	}
 }
