@@ -44,14 +44,15 @@ public class ASTGenerator {
 			ASTNode lhs = translate(ctx.andExpr());
 			ASTNode rhs = translate(ctx.addExpr());
 			return new ASTBinaryExprNode(ctx.ANDOP().getText(), lhs, rhs);
-		} else if (ctxx instanceof AddExprContext) {
-			AddExprContext ctx = (AddExprContext) ctxx;
-			if (ctx.addExpr() == null)
-				return translate(ctx.mulExpr());
-			ASTNode lhs = translate(ctx.addExpr());
-			ASTNode rhs = translate(ctx.mulExpr());
-			return new ASTBinaryExprNode(ctx.ADDOP().getText(), lhs, rhs);
 		} 
+//		else if (ctxx instanceof AddExprContext) {
+//			AddExprContext ctx = (AddExprContext) ctxx;
+//			if (ctx.addExpr() == null)
+//				return translate(ctx.mulExpr());
+//			ASTNode lhs = translate(ctx.addExpr());
+//			ASTNode rhs = translate(ctx.mulExpr());
+//			return new ASTBinaryExprNode(ctx.ADDOP().getText(), lhs, rhs);
+//		} 
 //		マイナス処理
 		else if (ctxx instanceof AddExprContext) {
 			AddExprContext ctx = (AddExprContext) ctxx;

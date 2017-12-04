@@ -1,5 +1,7 @@
-var x; var y;
+var x; var y; var _x;
+var ans2579r;
 {
+   x = 0;
   _x = 15;
   if (_x)
     y = x;
