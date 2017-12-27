@@ -15,6 +15,7 @@ import parser.PiLangParser.LiteralExprContext;
 import parser.PiLangParser.MulExprContext;
 import parser.PiLangParser.OrExprContext;
 import parser.PiLangParser.ParenExprContext;
+import parser.PiLangParser.PrintStmtContext;
 import parser.PiLangParser.ProgContext;
 import parser.PiLangParser.ReturnStmtContext;
 import parser.PiLangParser.StmtContext;
@@ -86,7 +87,13 @@ public class ASTGenerator {
 				ReturnStmtContext ctx = (ReturnStmtContext) ctxx;
 				ASTNode expr = translate(ctx.expr());	
 				return new ASTReturnNode(expr);
-		} else if (ctxx instanceof ExprContext) {
+		}
+		else if(ctxx instanceof PrintStmtContext) {
+			PrintStmtContext ctx = (PrintStmtContext) ctxx;
+			ASTNode expr = translate(ctx.expr());
+			return new ASTPrintStmtNode(expr);
+		}
+		else if (ctxx instanceof ExprContext) {
 			ExprContext ctx = (ExprContext) ctxx;
 			return translate(ctx.orExpr());
 		}

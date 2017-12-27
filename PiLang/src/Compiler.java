@@ -10,6 +10,7 @@ import parser.PiLangLexer;
 import parser.PiLangParser;
 
 public class Compiler extends CompilerBase {
+	boolean check_print = false;
 	Environment globalEnv;
 	
 	void compileFunction(ASTFunctionNode nd) {
@@ -110,6 +111,52 @@ public class Compiler extends CompilerBase {
 			ASTReturnNode nd = (ASTReturnNode) ndx;
 			compileExpr(nd.expr, env);
 			emitJMP("b", epilogueLabel);
+		}
+//		Print文の作成
+		 else if (ndx instanceof ASTPrintStmtNode) {
+			ASTPrintStmtNode nd = (ASTPrintStmtNode) ndx;
+			String loopLabel = freshLabel();
+//			String Hexadecimal = freshLabel();
+//			String ENDHexadecimal = freshLabel();
+			compileExpr(nd.expr, env);
+			emitPUSH(REG_R1);
+			emitPUSH(REG_R2);
+			emitPUSH(REG_R3);
+			emitPUSH(REG_R4);
+			emitPUSH(REG_R5);
+			emitPUSH(REG_R6);
+			emitPUSH(REG_R7);
+
+			
+			System.out.println("\tldr r1, =buf + nchar");
+			emitRI("mov", REG_R2, 10);
+			emitRI("mov", REG_R6, 1);
+			
+			emitLabel(loopLabel);
+			emitRRR("udiv", REG_R4, REG_DST, REG_R2);
+			emitRRR("mul", REG_R5, REG_R4, REG_R2);
+			emitRRR("sub", REG_R7, REG_DST, REG_R5);
+			emitRRI("sub", REG_R1, REG_R1, 1);
+			emitRRI("add", REG_R7, REG_R7, '0');
+			System.out.println("\tstrb r7, [r1]");	
+			emitRRI("add", REG_R6, REG_R6, 1);
+			emitRR("mov", REG_DST, REG_R4);
+			emitRI("cmp", REG_DST, 0);
+			emitJMP("bhi", loopLabel);
+			
+			emitRI("mov", REG_R7, 4);
+			emitRI("mov", REG_DST, 1);
+			emitRR("mov", REG_R2, REG_R6);
+			emitI("swi", 0);
+
+
+			emitPOP(REG_R7);
+			emitPOP(REG_R6);
+			emitPOP(REG_R5);
+			emitPOP(REG_R4);
+			emitPOP(REG_R3);
+			emitPOP(REG_R2);
+			emitPOP(REG_R1);
 		}
 		else
 			throw new Error("Unkown expression: "+ndx);

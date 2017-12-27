@@ -186,3 +186,13 @@ class ASTUnaryExprNode extends ASTNode {
 	}
 }
 
+class ASTPrintStmtNode extends ASTNode {
+	ASTNode expr;
+	ASTPrintStmtNode(ASTNode expr) {
+		this.expr = expr;
+	}
+	@Override
+	public String toString() {
+		return "(PrintStmt "+expr+")";
+	}
+}

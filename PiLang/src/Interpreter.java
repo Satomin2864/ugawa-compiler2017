@@ -96,7 +96,11 @@ public class Interpreter extends InterpreterBase {
 			ASTReturnNode nd = (ASTReturnNode) ndx;
 			int value = evalExpr(nd.expr, env);
 			return new ReturnValue(value);
-		}
+		} else if (ndx instanceof ASTPrintStmtNode){
+			ASTPrintStmtNode nd = (ASTPrintStmtNode) ndx;
+			System.out.println(String.format("%08X", evalExpr(nd.expr, env)));
+			return null;
+		} 
 		else
 			throw new Error("Unknown statement: "+ndx);
 	}
@@ -150,7 +154,8 @@ public class Interpreter extends InterpreterBase {
 				args.add(arg);
 			}
 			return evalFunction(func, args);
-		} else {
+		} 
+		else {
 			throw new Error("Unknown expression: "+ndx);
 		}
 	}
