@@ -21,10 +21,19 @@ stmt: '{' stmt* '}'							# compoundStmt
 	| 'return' expr ';'						# returnStmt
 	;
 
-expr: addExpr
+expr: orExpr
       ;
+      
+orExpr: orExpr OROP andExpr
+	| andExpr
+	;
+
+andExpr: andExpr ANDOP addExpr
+	| addExpr
+	;
 
 addExpr: addExpr ADDOP mulExpr
+	| addExpr SUBOP mulExpr
 	| mulExpr
 	;
 
@@ -36,14 +45,20 @@ unaryExpr: VALUE			# literalExpr
 	| IDENTIFIER			# varExpr
 	| '(' expr ')'			# parenExpr
 	| IDENTIFIER '(' args ')' # callExpr
+	| SUBOP unaryExpr			# subExpr
+	| NOTOP unaryExpr			# notExpr
 	;
 
 args: /* no arguments */
 	| expr ( ',' expr )*
 	;
 
-ADDOP: '+'|'-';
+ADDOP: '+';
+SUBOP: '-';
+NOTOP: '~';
 MULOP: '*'|'/';
+OROP:  '|';
+ANDOP: '&';
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 VALUE: '0'|[1-9][0-9]*;

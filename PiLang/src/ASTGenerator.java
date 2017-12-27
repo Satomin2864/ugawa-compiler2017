@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import javafx.scene.transform.Translate;
 import parser.PiLangParser.AddExprContext;
+import parser.PiLangParser.AndExprContext;
 import parser.PiLangParser.AssignStmtContext;
 import parser.PiLangParser.CallExprContext;
 import parser.PiLangParser.CompoundStmtContext;
@@ -13,6 +13,7 @@ import parser.PiLangParser.FuncDeclContext;
 import parser.PiLangParser.IfStmtContext;
 import parser.PiLangParser.LiteralExprContext;
 import parser.PiLangParser.MulExprContext;
+import parser.PiLangParser.OrExprContext;
 import parser.PiLangParser.ParenExprContext;
 import parser.PiLangParser.ProgContext;
 import parser.PiLangParser.ReturnStmtContext;
@@ -87,13 +88,35 @@ public class ASTGenerator {
 				return new ASTReturnNode(expr);
 		} else if (ctxx instanceof ExprContext) {
 			ExprContext ctx = (ExprContext) ctxx;
-			return translate(ctx.addExpr());
-		} else if (ctxx instanceof AddExprContext) {
+			return translate(ctx.orExpr());
+		}
+//		or処理
+		else if (ctxx instanceof OrExprContext) {
+			OrExprContext ctx = (OrExprContext) ctxx;
+			if (ctx.orExpr() == null)
+				return translate(ctx.andExpr());
+			ASTNode lhs = translate(ctx.orExpr());
+			ASTNode rhs = translate(ctx.andExpr());
+			return new ASTBinaryExprNode(ctx.OROP().getText(), lhs, rhs);
+		} 
+//		and処理
+		else if (ctxx instanceof AndExprContext) {
+			AndExprContext ctx = (AndExprContext) ctxx;
+			if (ctx.andExpr() == null)
+				return translate(ctx.addExpr());
+			ASTNode lhs = translate(ctx.andExpr());
+			ASTNode rhs = translate(ctx.addExpr());
+			return new ASTBinaryExprNode(ctx.ANDOP().getText(), lhs, rhs);
+		} 
+//		マイナス処理
+		else if (ctxx instanceof AddExprContext) {
 			AddExprContext ctx = (AddExprContext) ctxx;
 			if (ctx.addExpr() == null)
 				return translate(ctx.mulExpr());
 			ASTNode lhs = translate(ctx.addExpr());
 			ASTNode rhs = translate(ctx.mulExpr());
+			if (ctx.ADDOP() == null)
+				return new ASTBinaryExprNode(ctx.SUBOP().getText(), lhs, rhs);
 			return new ASTBinaryExprNode(ctx.ADDOP().getText(), lhs, rhs);
 		} else if (ctxx instanceof MulExprContext) {
 			MulExprContext ctx = (MulExprContext) ctxx;
